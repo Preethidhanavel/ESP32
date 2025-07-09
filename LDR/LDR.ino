@@ -1,21 +1,17 @@
 void setup() {
-  // put your setup code here, to run once:
-      Serial.begin(9600);
-  
-      pinMode(2,OUTPUT);
-      
+  Serial.begin(9600);      // Start serial communication
+  pinMode(2, OUTPUT);      // Set pin 2 as output
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-    if (analogRead(34)<2000)
-    {
-      digitalWrite(2,HIGH);
-     
-    }
-     // delay(500);
-      else
-      {
-      digitalWrite(2,LOW);
-    }
+  if (analogRead(34) > 2000) 
+  {
+    digitalWrite(2, HIGH); // Turn ON LED if value > 2000 means dark
+  } 
+  else 
+  {
+    digitalWrite(2, LOW);  // Turn OFF LED otherwise
+  }
+
+  delay(500);              // delay
 }

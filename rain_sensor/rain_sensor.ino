@@ -1,24 +1,18 @@
-#define POWER_PIN 19
-#define DO_PIN 21
+#define DO_PIN 21      // Digital output pin from the rain sensor
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(POWER_PIN, OUTPUT);
-  pinMode(DO_PIN, INPUT);
+  Serial.begin(9600);           // Start serial communication
+  pinMode(DO_PIN, INPUT);       // Set digital output pin as input
 }
 
 void loop() {
-  digitalWrite(POWER_PIN, HIGH);
-  delay(10);
-
-  int rain_state = digitalRead(DO_PIN);
-
-  digitalWrite(POWER_PIN, LOW);
+ 
+  int rain_state = digitalRead(DO_PIN); // Read sensor value
 
   if (rain_state == HIGH)
-    Serial.println("The rain is NOT detected");
+    Serial.println("The rain is NOT detected"); // No rain
   else
-    Serial.println("The rain is detected");
+    Serial.println("The rain is detected");     // Rain detected
 
-  delay(1000);
+  delay(1000); //delay
 }

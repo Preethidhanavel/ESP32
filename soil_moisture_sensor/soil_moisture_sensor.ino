@@ -1,19 +1,18 @@
-#define MOISTURE_PIN 34  
+#define MOISTURE_PIN 34  // Analog pin connected to soil moisture sensor
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);  // Start serial communication
 }
 
 void loop() {
-  int sensorValue = analogRead(MOISTURE_PIN);  
+  int sensorValue = analogRead(MOISTURE_PIN);  // Read raw analog value (0–4095)
 
-
+  // Convert raw value to percentage (0 = wet, 4095 = dry)
   int moisturePercent = map(sensorValue, 0, 4095, 100, 0);
 
   Serial.print("Soil Moisture: ");
   Serial.print(moisturePercent);
   Serial.println(" %");
 
-  delay(1000);
+  delay(1000);  // Wait 1 second before next reading
 }
-

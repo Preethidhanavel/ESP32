@@ -1,118 +1,103 @@
 #include <WiFi.h>
 
-const char* ssid = "Preethi";         
-const char* password = "preethi@123"; 
+const char* ssid = "Preethi";         // WiFi SSID
+const char* password = "*******"; // WiFi password
 
-WiFiServer server(80); 
+WiFiServer server(80);  // Create server on port 80 (HTTP)
 String request;
-#define  LED 21
+#define LED 21           // LED connected to GPIO 21
 
-int LED_Status; 
-
+int LED_Status;          // To track LED state
 WiFiClient client;
 
-void setup() 
-{
+void setup() {
   Serial.begin(115200);
   pinMode(LED, OUTPUT);
-  digitalWrite(LED, LOW);
+  digitalWrite(LED, LOW); // Start with LED off
 
+  // Connect to WiFi
   Serial.print("Connecting to");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  while(WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(100);
   }
-  Serial.print("\n");
-  Serial.print("Connected to Wi-Fi ");
-  Serial.println(WiFi.SSID());
-  delay(1000);
-  
-  server.begin(); 
 
-  Serial.print("Connect to IP Address: ");
-  Serial.print("http://");
+  Serial.print("\nConnected to Wi-Fi ");
+  Serial.println(WiFi.SSID());
+
+  server.begin();  // Start the web server
+
+  // Print the ESP32's IP address
+  Serial.print("Connect to IP Address: http://");
   Serial.println(WiFi.localIP());
 }
 
-void html (){
+// Function to send HTML page to the browser
+void html() {
   client.println("HTTP/1.1 200 OK");
   client.println("Content-Type: text/html");
   client.println("Connection: close");
   client.println();
 
-  client.println("<!DOCTYPE HTML>");
-  client.println("<html>");
-
+  client.println("<!DOCTYPE HTML><html>");
   client.println("<head>");
-    client.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-    client.println("<link rel=\"icon\" href=\"data:,\">");
-    client.println("<style>");
-      client.println("html { font-family: Roboto; display: inline-block; margin: 0px auto; text-align: center;}");
-      client.println(".button {background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;");
-      client.println("text-decoration: none; font-size: 25px; margin: 2px; cursor: pointer;}");
-      client.println(".button_ON {background-color: white; color: black; border: 2px solid #4CAF50;}");
-      client.println(".button_OFF {background-color: white; color: black; border: 2px solid #f44336;}");
-    client.println("</style>");
+  client.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+  client.println("<style>");
+  client.println("html { font-family: Roboto; text-align: center;}");
+  client.println(".button { padding: 15px 32px; font-size: 25px; cursor: pointer;}");
+  client.println(".button_ON { background-color: white; color: black; border: 2px solid #4CAF50; }");
+  client.println(".button_OFF { background-color: white; color: black; border: 2px solid #f44336; }");
+  client.println("</style>");
   client.println("</head>");
+
   client.println("<body>");
   client.println("<h2>ESP32 WiFi Station Mode</h2>");
   client.println("<p>Click to Turn ON and OFF the LED</p>");
 
-  if(LED_Status == LOW) 
-  {
-    client.print("<p><a href=\"/LED_ON\n\"><button class=\"button button_ON\">ON</button></a></p>"); 
-  } 
- 
-  else
-  {
-    client.print("<p><a href=\"/LED_OFF\n\"><button class=\"button button_OFF\">OFF</button></a></p>"); 
-  } 
- 
-  client.println("</body>");
- client.println("</html>");     
-}
-
-void loop()
-{
-  client = server.available();
-  if(!client)
-  {
-    return;
+  // Show ON or OFF button depending on LED status
+  if (LED_Status == LOW) {
+    client.print("<p><a href=\"/LED_ON\n\"><button class=\"button button_ON\">ON</button></a></p>");
+  } else {
+    client.print("<p><a href=\"/LED_OFF\n\"><button class=\"button button_OFF\">OFF</button></a></p>");
   }
 
-  while (client.connected())
-  {
-    if (client.available())
-    {
-      char c = client.read();
+  client.println("</body></html>");
+}
+
+void loop() {
+  client = server.available();  // Wait for client connection
+  if (!client) return;
+
+  while (client.connected()) {
+    if (client.available()) {
+      char c = client.read();   // Read request character by character
       request += c;
 
-      if (c == '\n')
-      {
-        if (request.indexOf("GET /LED_ON") != -1) 
-        {
-          Serial.println("LED in ON");
+      // When end of HTTP request line is reached
+      if (c == '\n') {
+        // Handle LED ON command
+        if (request.indexOf("GET /LED_ON") != -1) {
+          Serial.println("LED is ON");
           digitalWrite(LED, HIGH);
           LED_Status = HIGH;
         }
 
-        if (request.indexOf("GET /LED_OFF") != -1)
-        {
-          Serial.println("LED in OFF");
+        // Handle LED OFF command
+        if (request.indexOf("GET /LED_OFF") != -1) {
+          Serial.println("LED is OFF");
           digitalWrite(LED, LOW);
           LED_Status = LOW;
         }
-        html();
+
+        html();  // Send HTML response
         break;
-    }
+      }
     }
   }
 
   delay(1);
-  request="";
-  client.stop();
+  request = "";      // Clear the request buffer
+  client.stop();     // Close the connection
 }
- 

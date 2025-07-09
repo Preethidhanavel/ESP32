@@ -1,21 +1,16 @@
 void setup() {
-  // put your setup code here, to run once:
-      Serial.begin(9600);
-      pinMode(0,INPUT);
-      pinMode(2,OUTPUT);
-      
+  pinMode(0, INPUT);      // Set pin 0 as input - button
+  pinMode(2, OUTPUT);     // Set pin 2 as output - LED
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-    if (digitalRead(0)==HIGH)
-    {
-      digitalWrite(2,HIGH);
-      delay(1000);
-    }
-     // delay(500);
-      else
-      {
-      digitalWrite(2,LOW);
-    }
+  if (digitalRead(0) == HIGH)      // If input on pin 0 is HIGH
+  { 
+    digitalWrite(2, HIGH);        // Turn ON LED
+    delay(1000);                  // Wait for 1 second
+  } 
+  else 
+  {
+    digitalWrite(2, LOW);         // Turn OFF LED
+  }
 }

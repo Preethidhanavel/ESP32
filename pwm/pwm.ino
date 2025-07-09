@@ -1,26 +1,27 @@
-const int ledPin = 16;        
-const int freq = 5000;      
-const int resolution = 8;   
+const int ledPin = 16;       // GPIO 16 connected to LED
+const int freq = 5000;       // PWM frequency = 5 kHz
+const int resolution = 8;    // 8-bit resolution (0–255 duty cycle)
 
 void setup() {
-  
-  if (!ledcAttach(ledPin, freq, resolution))
-   {
-    
-    while (1); 
+  // Attach LED pin to a PWM channel with given frequency and resolution
+  if (!ledcAttach(ledPin, freq, resolution)) 
+  {
+    while (1);  // Stop if PWM setup fails
   }
 }
 
 void loop() {
- 
-  for (int dutyCycle = 0; dutyCycle <= 255; dutyCycle++)
-   {
-    ledcWrite(ledPin, dutyCycle); 
-    delay(15);
+  // Increase brightness
+  for (int dutyCycle = 0; dutyCycle <= 255; dutyCycle++) 
+  {
+    ledcWrite(ledPin, dutyCycle);  // Set PWM duty cycle
+    delay(15);                     // Small delay for smooth fade
   }
 
-  for (int dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
-    ledcWrite(ledPin, dutyCycle);
-    delay(15);
+  // Decrease brightness
+  for (int dutyCycle = 255; dutyCycle >= 0; dutyCycle--) 
+  {
+    ledcWrite(ledPin, dutyCycle);  // Set PWM duty cycle
+    delay(15);                     // Small delay for smooth fade
   }
 }

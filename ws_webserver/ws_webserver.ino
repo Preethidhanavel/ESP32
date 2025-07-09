@@ -1,14 +1,15 @@
-#include <WiFi.h>
+#include <WiFi.h>  // Include WiFi library for ESP32
 
-const char* ssid     = "Preethi";
-const char* password = "preethi@123";
+const char* ssid     = "Preethi";        // WiFi SSID
+const char* password = "*******";    // WiFi password
 
-WiFiServer server(80);
+WiFiServer server(80);  // Create a web server on port 80 (HTTP)
 
 void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid, password);
+  Serial.begin(115200);      // Start serial communication
+  WiFi.begin(ssid, password);  // Connect to WiFi
 
+  // Wait until connected
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -16,13 +17,13 @@ void setup() {
 
   Serial.println();
   Serial.print("Connected! IP address: ");
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP());  // Print local IP address
 
-  server.begin();
+  server.begin();  // Start the server
 }
 
 void loop() {
-  WiFiClient client = server.available();
+  WiFiClient client = server.available();  // Check if a client has connected
 
   if (client) {
     String currentRequest = "";
@@ -32,12 +33,15 @@ void loop() {
         char c = client.read();
         currentRequest += c;
 
+        // On receiving a full line (end of HTTP request line)
         if (c == '\n') {
+          // Send standard HTTP response
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
           client.println("Connection: close");
           client.println();
 
+          // Send simple HTML content
           client.println("<!DOCTYPE html>");
           client.println("<html>");
           client.println("<head><title>ESP32 Web Server</title></head>");
@@ -45,12 +49,12 @@ void loop() {
           client.println("<p>This is a simple web page served by ESP32.</p>");
           client.println("</body></html>");
 
-          break;
+          break;  // Exit loop after sending response
         }
       }
     }
 
-    delay(1);
-    client.stop();
+    delay(1);      // Short delay
+    client.stop(); // Close the connection
   }
 }
