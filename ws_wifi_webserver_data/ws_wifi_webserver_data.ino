@@ -59,7 +59,8 @@ void html() {
   // Show ON or OFF button depending on LED status
   if (LED_Status == LOW) {
     client.print("<p><a href=\"/LED_ON\n\"><button class=\"button button_ON\">ON</button></a></p>");
-  } else {
+  } 
+  else {
     client.print("<p><a href=\"/LED_OFF\n\"><button class=\"button button_OFF\">OFF</button></a></p>");
   }
 

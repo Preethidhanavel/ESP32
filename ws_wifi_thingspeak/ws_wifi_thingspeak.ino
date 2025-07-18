@@ -61,7 +61,8 @@ void loop() {
 
     if (httpCode > 0) {
       Serial.println("Data sent to ThingSpeak.");
-    } else {
+    } 
+    else {
       Serial.print("Error sending data. Code: ");
       Serial.println(httpCode);
     }
